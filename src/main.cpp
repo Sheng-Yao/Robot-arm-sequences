@@ -1,13 +1,8 @@
 #include <Arduino.h>
-// #include <Wire.h>
 #include <Servo.h>
-// #include <LiquidCrystal_I2C.h>
 
 //create servo class object (total of 5 servo motors)
 Servo servo1,servo2,servo3,servo4,servo5;
-
-// //create lcd class object
-// LiquidCrystal_I2C lcd(0x27,20,4);
 
 //initial position of each servo motors
 byte angle1 = 20;
@@ -20,6 +15,7 @@ void setup()
 {
   //Setup UART communication port (TX, RX)
   Serial.begin(9600);
+
   //servo motor pin setup
   servo1.attach(9);
   servo2.attach(10);
@@ -55,15 +51,6 @@ void setup()
     servo5.write(angle5);
     delay(25);
   }
-
-  // //initialize lcd module
-  // lcd.init();
-  // lcd.backlight();
-  // lcd.clear();
-  // lcd.setCursor(0,0);
-  pinMode(21,OUTPUT);
-  digitalWrite(21,LOW);
-  delay(1000);
 }
 
 // Number of assembly required to be collected
@@ -161,11 +148,6 @@ void loop()
         targetangle4 = 105;
         targetangle5 = firstRowAngle;
         break;
-
-      // case 3:
-      //   targetangle4 = 115;
-      //   targetangle5 = secondRowAngle;
-      //   break;
       
       //if error remain infinite loop to avoid any errors
       default:
