@@ -11,51 +11,35 @@ byte angle3 = 150;
 byte angle4 = 140;
 byte angle5 = 150;
 
+bool servoSetup();
+bool servoCalibration();
+
 void setup()
 {
   //Setup UART communication port (TX, RX)
   Serial.begin(9600);
 
-  //servo motor pin setup
-  servo1.attach(9);
-  servo2.attach(10);
-  servo3.attach(11);
-  servo4.attach(12);
-  servo5.attach(13);
+  if(!servoSetup()){
+    Serial.println("Error in setup");
+    while(!servoSetup()){
+      Serial.print(".");
+    }
+  }
 
-  //setup angle position for each servo motors
-  servo1.write(angle1);
-  servo2.write(angle2);
-  servo3.write(angle3);
-  servo4.write(angle4);
-  servo5.write(angle5);
+  Serial.println();
 
-  //ensure that each servo motor reached the desired positions
-  while(servo1.read() != angle1){
-    servo1.write(angle1);
-    delay(25);
-  }
-  while(servo2.read() != angle2){
-    servo2.write(angle2);
-    delay(25);
-  }
-  while(servo3.read() != angle3){
-    servo3.write(angle3);
-    delay(25);
-  }
-  while(servo4.read() != angle4){
-    servo4.write(angle4);
-    delay(25);
-  }
-  while(servo5.read() != angle5){
-    servo5.write(angle5);
-    delay(25);
+  if(!servoCalibration()){
+    Serial.println("Error in callibration");
+    while(!servoCalibration()){
+      Serial.print(".");
+    }
   }
 }
 
 // Number of assembly required to be collected
 byte totalNumberOfAssembly = 0;
 
+// current handling assembly
 int currentAssembly = 0;
 
 void loop()
@@ -69,7 +53,7 @@ void loop()
     }
   }
 
-  if(currentAssembly != totalNumberOfAssembly){
+  if(currentAssembly != totalNumberOfAssembly && currentAssembly < 6){
 
     //initial angle values
     angle1 = 20;
@@ -85,7 +69,7 @@ void loop()
     servo4.write(angle4);
     servo5.write(angle5);
 
-    // delay(1000);
+    servoCalibration();
 
     while(angle4 > 105){
       servo4.write(angle4);
@@ -175,7 +159,6 @@ void loop()
     while(angle4 > targetangle4){
       servo4.write(angle4);
       servo3.write(angle3);
-      //0.75
       angle3 -= 0.75;
       angle4 -= 2;
       delay(40);
@@ -227,5 +210,57 @@ void loop()
   }
   else{
     delay(50);
+  }
+}
+
+bool servoSetup(){
+  //servo motor pin setup
+  servo1.attach(9);
+  servo2.attach(10);
+  servo3.attach(11);
+  servo4.attach(12);
+  servo5.attach(13);
+
+  //setup angle position for each servo motors
+  servo1.write(angle1);
+  servo2.write(angle2);
+  servo3.write(angle3);
+  servo4.write(angle4);
+  servo5.write(angle5);
+
+  if(servo1.attached() && servo2.attached() && servo3.attached() && servo4.attached() && servo5.attached()){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+bool servoCalibration(){
+  //ensure that each servo motor reached the desired positions
+  while(servo1.read() != angle1){
+    servo1.write(angle1);
+    delay(25);
+  }
+  while(servo2.read() != angle2){
+    servo2.write(angle2);
+    delay(25);
+  }
+  while(servo3.read() != angle3){
+    servo3.write(angle3);
+    delay(25);
+  }
+  while(servo4.read() != angle4){
+    servo4.write(angle4);
+    delay(25);
+  }
+  while(servo5.read() != angle5){
+    servo5.write(angle5);
+    delay(25);
+  }
+
+  if(servo1.read() == angle1 && servo2.read() == angle2 && servo3.read() == angle3 && servo4.read() == angle4 && servo5.read() == angle5){
+    return true;
+  }else{
+    return false;
   }
 }
